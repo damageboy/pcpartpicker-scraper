@@ -113,13 +113,16 @@ def update_html():
             part_data = all_data[region][part]
             # Check that all dicts are valid
             dataclass_data = [dataclass_from_dict(part_classes[part], item) for item in part_data]
-            part_string = json.dumps(part_data).encode()
-            compressed_parts = lz4.frame.compress(part_string)
+            part_string = json.dumps(part_data)
+            compressed_parts = lz4.frame.compress(part_string.encode())
             encoded_parts = str(base64.urlsafe_b64encode(compressed_parts), 'utf-8')
             html = html_doc.format(encoded_parts)
             file_name = part + ".html"
+            json_filename = part + ".json"
             with open(region_path / file_name, "w+") as file:
                 file.write(html)
+            with open(region_path / json_filename, "w+") as file:
+                file.write(part_string)
 
 
 if __name__ == "__main__":
